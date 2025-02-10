@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management System</title>
+    <link rel="stylesheet" href="stock-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Stock Management System</h1>
+            <div class="header-buttons">
+                <button id="add-item-btn" class="primary-btn">Add New Item</button>
+                <button id="add-sale-btn" class="primary-btn">Record Sale</button>
+                <button id="add-purchase-btn" class="primary-btn">Record Purchase</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="inventory">Inventory</button>
+            <button class="tab-btn" data-tab="sales">Sales History</button>
+            <button class="tab-btn" data-tab="purchases">Purchase History</button>
+        </div>
+
+        <div id="inventory" class="tab-content active">
+            <div class="search-section">
+                <input type="text" id="search-input" placeholder="Search items...">
+                <select id="category-filter">
+                    <option value="">All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="food">Food</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="stock-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-list">
+                        <!-- Stock items will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sales" class="tab-content">
+            <div class="search-section">
+                <input type="text" id="sales-search" placeholder="Search sales...">
+                <input type="date" id="sales-date-filter">
+            </div>
+            <div class="transaction-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Date</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Amount</th>
+                            <th>Payment Status</th>
+                            <th>Customer</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-list">
+                        <!-- Sales records will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="purchases" class="tab-content">
+            <div class="search-section">
+                <input type="text" id="purchases-search" placeholder="Search purchases...">
+                <input type="date" id="purchases-date-filter">
+            </div>
+            <div class="transaction-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Date</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Amount</th>
+                            <th>Payment Status</th>
+                            <th>Supplier</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchases-list">
+                        <!-- Purchase records will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add/Edit Item Modal -->
+        <div id="item-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modal-title">Add New Item</h2>
+                <form id="item-form">
+                    <input type="hidden" id="item-id">
+                    <div class="form-group">
+                        <label for="item-name">Item Name</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-category">Category</label>
+                        <select id="item-category" required>
+                            <option value="airconditioner">AIR CONDITIONER</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="food">Food</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-quantity">Quantity</label>
+                        <input type="number" id="item-quantity" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-price">Price</label>
+                        <input type="number" id="item-price" min="0" step="0.01" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Save Item</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sale Modal -->
+        <div id="sale-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Record Sale</h2>
+                <form id="sale-form">
+                    <div class="form-group">
+                        <label for="sale-invoice">Invoice Number</label>
+                        <input type="text" id="sale-invoice" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-item">Select Item</label>
+                        <select id="sale-item" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-quantity">Quantity</label>
+                        <input type="number" id="sale-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-price">Unit Price</label>
+                        <input type="number" id="sale-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-type">Customer Type</label>
+                        <select id="customer-type" required>
+                            <option value="walkin">Walk-in</option>
+                            <option value="regular">Regular</option>
+                            <option value="wholesale">Wholesale</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-name">Customer Name</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div class="form-group" id="customer-info-group">
+                        <label for="customer-phone">Phone Number</label>
+                        <input type="tel" id="customer-phone" pattern="[0-9]{10}" placeholder="Enter 10-digit number">
+                        <label for="customer-email">Email</label>
+                        <input type="email" id="customer-email" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="upi">UPI</option>
+                            <option value="credit">Store Credit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-status">Payment Status</label>
+                        <select id="payment-status" required>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="partial">Partial</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="paid-amount-group">
+                        <label for="paid-amount">Paid Amount</label>
+                        <input type="number" id="paid-amount" min="0" step="0.01">
+                    </div>
+                    <button type="submit" class="primary-btn">Record Sale</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Purchase Modal -->
+        <div id="purchase-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Record Purchase</h2>
+                <form id="purchase-form">
+                    <div class="form-group">
+                        <label for="purchase-invoice">Invoice Number</label>
+                        <input type="text" id="purchase-invoice" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-item">Select Item</label>
+                        <select id="purchase-item" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-quantity">Quantity</label>
+                        <input type="number" id="purchase-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-price">Unit Price</label>
+                        <input type="number" id="purchase-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supplier-name">Supplier Name</label>
+                        <input type="text" id="supplier-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-payment-method">Payment Method</label>
+                        <select id="purchase-payment-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="check">Check</option>
+                            <option value="credit">Credit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-payment-status">Payment Status</label>
+                        <select id="purchase-payment-status" required>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="partial">Partial</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="purchase-paid-amount-group">
+                        <label for="purchase-paid-amount">Paid Amount</label>
+                        <input type="number" id="purchase-paid-amount" min="0" step="0.01">
+                    </div>
+                    <button type="submit" class="primary-btn">Record Purchase</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payment Record Modal -->
+        <div id="payment-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Record Payment</h2>
+                <form id="payment-form">
+                    <input type="hidden" id="payment-transaction-id">
+                    <input type="hidden" id="payment-transaction-type">
+                    <div class="form-group">
+                        <label for="payment-invoice-display">Invoice Number</label>
+                        <input type="text" id="payment-invoice-display" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-total-amount">Total Amount</label>
+                        <input type="number" id="payment-total-amount" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-amount-paid">Amount Already Paid</label>
+                        <input type="number" id="payment-amount-paid" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-amount-due">Amount Due</label>
+                        <input type="number" id="payment-amount-due" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-new-amount">Payment Amount</label>
+                        <input type="number" id="payment-new-amount" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-tax-deduction">Tax Deduction (%)</label>
+                        <input type="number" id="payment-tax-deduction" min="0" max="100" step="0.01" value="0">
+                        <div class="tax-info">
+                            <span>Tax Amount: </span>
+                            <span id="tax-amount-display">$0.00</span>
+                        </div>
+                        <div class="net-amount-info">
+                            <span>Net Amount After Tax: </span>
+                            <span id="net-amount-display">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-new-method">Payment Method</label>
+                        <select id="payment-new-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="upi">UPI</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                    <div id="bank-details-group" style="display: none;">
+                        <div class="form-group">
+                            <label for="payment-bank-name">Bank Name</label>
+                            <input type="text" id="payment-bank-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-check-number">Check Number</label>
+                            <input type="text" id="payment-check-number" pattern="[0-9]+" placeholder="Enter check number">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-transaction-ref">Transaction Reference</label>
+                            <input type="text" id="payment-transaction-ref" placeholder="Enter transaction reference">
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-btn">Record Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="stock-script.js"></script>
+</body>
+</html>
